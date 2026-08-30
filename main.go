@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type no struct {
 	valor   int
 	proximo *no
@@ -144,6 +146,31 @@ func (lista *Lista) removerPosicao(posicao int) (int, bool) {
 	return valorAnterior, true
 }
 
+/* Exercício 6 — Busca por Valor
+Implemente posicao(valorProcurado int) (int, bool), que percorre a lista comparando atual.valor a cada passo e retorna o índice onde o valor foi encontrado (ou 0, false se não existir).
+Branch sugerida: 05-encontrar-posicao */
+
+func (lista *Lista) posicao(valorProcurado int) (int, bool) {
+	contador := 0
+	atual := lista.inicio
+
+	if atual == nil || valorProcurado < 0 {
+		return 0, false
+	}
+
+	for atual != nil && contador < valorProcurado-1 {
+
+		if atual.valor == valorProcurado {
+			return contador, true
+		}
+
+		atual = atual.proximo
+		contador++
+	}
+
+	return 0, false
+}
+
 func (lista *Lista) imprimir() {
 	atual := lista.inicio
 
@@ -187,7 +214,11 @@ func main() {
 	lista.imprimir()
 
 	removendoValorPosicao, sucess := lista.removerPosicao(3)
-	println("\n\nValor removido da posição 3", removendoValorPosicao, sucess)
+	fmt.Printf("\n\nValor removido da posição 3 valor removido: %d status: %t", removendoValorPosicao, sucess)
 	println("\nLista:")
 	lista.imprimir()
+
+	valorBuscar := 5
+	buscandoValorPosicao, sucess := lista.posicao(valorBuscar)
+	fmt.Printf("\n\nValor procurado: %d índice: %d status: %t", valorBuscar, buscandoValorPosicao, sucess)
 }
