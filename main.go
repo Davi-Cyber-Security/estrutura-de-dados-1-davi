@@ -68,6 +68,48 @@ func (lista *Lista) adionarPosicao(valor, posicao int) bool {
 	return true
 }
 
+/*
+Exercício 4 — Remoção no Início e no Fim
+Implemente removerInicio() (int, bool) e removerFim() (int, bool), cada uma retornando o valor removido e um bool indicando sucesso. Trate o caso de lista vazia (retornando 0, false) e o caso de lista com um único elemento.
+Branch sugerida: 03-remover-inicio-e-fim
+*/
+
+func (lista *Lista) removerInicio() (int, bool) {
+	valorRemovido := lista.inicio
+
+	if lista == nil {
+		return 0, false
+	}
+
+	lista.inicio = lista.inicio.proximo
+
+	return valorRemovido.valor, true
+}
+
+func (lista *Lista) removerFinal() (int, bool) {
+	atual := lista.inicio
+
+	if lista == nil {
+		return 0, false
+	}
+
+	if lista.inicio.proximo == nil {
+		valor := lista.inicio.valor
+		lista.inicio = nil
+		return valor, true
+	}
+
+	for atual.proximo.proximo != nil {
+
+		atual = atual.proximo
+	}
+
+	valorRemovido := atual.proximo.valor
+	atual.proximo = nil
+
+	return valorRemovido, true
+}
+
 func (lista *Lista) imprimir() {
 	atual := lista.inicio
 
@@ -100,4 +142,13 @@ func main() {
 	println("Imprimindo lista")
 	lista.imprimir()
 
+	valorRemovidoInicio, sucess := lista.removerInicio()
+	println("\n\nValor removido do inicio", valorRemovidoInicio, sucess)
+	println("\nLista:")
+	lista.imprimir()
+
+	valorRemovidoFinal, sucess := lista.removerFinal()
+	println("\n\nValor removido do final", valorRemovidoFinal, sucess)
+	println("\nLista:")
+	lista.imprimir()
 }
