@@ -171,6 +171,30 @@ func (lista *Lista) posicao(valorProcurado int) (int, bool) {
 	return 0, false
 }
 
+/* Exercício 7 — Busca por Posição
+Implemente valorNaPosicao(posicaoProcurada int) (int, bool), que percorre a lista até o índice pedido e retorna o valor armazenado ali (ou 0, false se a posição não existir).
+Branch sugerida: 06-valor-na-posicao */
+
+func (lista *Lista) valorNaPosicao(posicaoProcurada int) (int, bool) {
+	atual := lista.inicio
+	contador := 0
+
+	if atual == nil || posicaoProcurada < 0 {
+		return 0, false
+	}
+
+	for atual != nil && contador < posicaoProcurada {
+		atual = atual.proximo
+		contador++
+	}
+
+	if atual == nil {
+		return 0, false
+	}
+
+	return atual.valor, true
+}
+
 func (lista *Lista) imprimir() {
 	atual := lista.inicio
 
@@ -221,4 +245,8 @@ func main() {
 	valorBuscar := 5
 	buscandoValorPosicao, sucess := lista.posicao(valorBuscar)
 	fmt.Printf("\n\nValor procurado: %d índice: %d status: %t", valorBuscar, buscandoValorPosicao, sucess)
+
+	valorBuscarPosicao := 2
+	buscandoValorNaPosicao, sucess := lista.valorNaPosicao(valorBuscarPosicao)
+	fmt.Printf("\n\nPosição procurado: %d valor: %d status: %t", valorBuscarPosicao, buscandoValorNaPosicao, sucess)
 }
