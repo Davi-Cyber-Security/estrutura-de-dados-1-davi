@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type no struct {
 	valor   int
 	proximo *no
@@ -114,17 +116,18 @@ func (lista *Lista) removerFinal() (int, bool) {
 Implemente removerPosicao(posicao int) (int, bool), pulando o nó removido com anterior.proximo = anterior.proximo.proximo. Trate posição inválida e lista vazia.
 Branch sugerida: 04-remover-posicao */
 
-func (lista *Lista) removerPosicao(posicao int) bool {
+func (lista *Lista) removerPosicao(posicao int) (int, bool) {
 	atual := lista.inicio
+	valorAnterior := 0
 	contador := 0
 
 	if posicao < 0 {
-		return false
+		return 0, false
 	}
 
 	if posicao == 0 {
 		lista.inicio = lista.inicio.proximo
-		return true
+		return 0, true
 	}
 
 	for atual != nil && contador < posicao-1 {
@@ -133,12 +136,39 @@ func (lista *Lista) removerPosicao(posicao int) bool {
 	}
 
 	if atual == nil || atual.proximo == nil {
-		return false
+		return 0, false
 	}
+
+	valorAnterior = atual.proximo.valor
 
 	atual.proximo = atual.proximo.proximo
 
-	return true
+	return valorAnterior, true
+}
+
+/* Exercício 6 — Busca por Valor
+Implemente posicao(valorProcurado int) (int, bool), que percorre a lista comparando atual.valor a cada passo e retorna o índice onde o valor foi encontrado (ou 0, false se não existir).
+Branch sugerida: 05-encontrar-posicao */
+
+func (lista *Lista) posicao(valorProcurado int) (int, bool) {
+	contador := 0
+	atual := lista.inicio
+
+	if atual == nil || valorProcurado < 0 {
+		return 0, false
+	}
+
+	for atual != nil && contador < valorProcurado-1 {
+
+		if atual.valor == valorProcurado {
+			return contador, true
+		}
+
+		atual = atual.proximo
+		contador++
+	}
+
+	return 0, false
 }
 
 func (lista *Lista) imprimir() {
@@ -183,8 +213,12 @@ func main() {
 	println("\nLista:")
 	lista.imprimir()
 
-	removendoValorPosicao := lista.removerPosicao(3)
-	println("\n\nValor removido da posição 3", removendoValorPosicao)
+	removendoValorPosicao, sucess := lista.removerPosicao(3)
+	fmt.Printf("\n\nValor removido da posição 3 valor removido: %d status: %t", removendoValorPosicao, sucess)
 	println("\nLista:")
 	lista.imprimir()
+
+	valorBuscar := 5
+	buscandoValorPosicao, sucess := lista.posicao(valorBuscar)
+	fmt.Printf("\n\nValor procurado: %d índice: %d status: %t", valorBuscar, buscandoValorPosicao, sucess)
 }
