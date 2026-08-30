@@ -53,6 +53,7 @@ func (lista *Lista) adicionarPosicao(valor, posicao int) bool {
 
 	if posicao == 0 {
 		lista.adicionarInicio(valor)
+		return true
 	}
 
 	for atual != nil && contador < posicao-1 {
@@ -195,6 +196,29 @@ func (lista *Lista) valorNaPosicao(posicaoProcurada int) (int, bool) {
 	return atual.valor, true
 }
 
+/* Exercício 8 — Tamanho, Impressão e Programa Integrador
+Implemente tamanho() int, que percorre a lista e conta os nós, e imprimir(), que percorre a lista exibindo os valores no formato:
+10 -> 20 -> 30 -> nil
+
+Em seguida, una todas as operações dos Exercícios 2 a 7 em um único programa Go com um menu interativo no terminal (usando fmt.Scan). Teste cada operação com lista vazia, lista de 1 elemento e índices fora do intervalo — confirme que ela devolve false/0 como esperado nesses casos.
+Branch sugerida: 07-tamanho-imprimir-integrador */
+
+func (lista *Lista) tamanho() int {
+	atual := lista.inicio
+	contador := 0
+
+	if atual == nil {
+		return 0
+	}
+
+	for atual != nil {
+		atual = atual.proximo
+		contador++
+	}
+
+	return contador
+}
+
 func (lista *Lista) imprimir() {
 	atual := lista.inicio
 
@@ -203,50 +227,183 @@ func (lista *Lista) imprimir() {
 		return
 	}
 	for atual != nil {
-		print(" ", atual.valor)
+		fmt.Printf("-> %d ", atual.valor)
 
 		atual = atual.proximo
+
+		if atual == nil {
+			fmt.Printf("-> nil ")
+		}
 	}
 
 }
 
 func main() {
 	var lista Lista
+	var opcao int
+	var valores int
+	var aux int
 
-	lista.adicionarInicio(5)
-	lista.adicionarFim(10)
-	lista.adicionarFim(18)
-	lista.adicionarInicio(15)
-	lista.adicionarInicio(12)
+	for {
+		print("\n1 - Adicionar valor no inicio da lista\n2 - Adicionar no final da lista\n3 - Adicionar na posição\n4 - Remover valor do inicio\n5 - Remover valor do final\n6 - Remover da posição\n7 - Procurar valor na lista\n8 - Procurar valor pela posição\n9 - Listar tamanho da lista\n10 - Fechar programa\n\nEscolha a opção: ")
+		fmt.Scan(&opcao)
 
-	lista.imprimir()
+		switch opcao {
+		case 1:
+			for {
+				fmt.Print("\nAdicione o valor: ")
+				fmt.Scan(&valores)
+				lista.adicionarInicio(valores)
+				println("Valor adicionado com sucesso!")
 
-	println("\n\nInserindo na posição 3")
-	ok := lista.adicionarPosicao(20, 3)
-	println("Adicionado 20 na posição 3\n", ok)
-	println("Imprimindo lista")
-	lista.imprimir()
+				println("\nLista:")
+				lista.imprimir()
+				println()
 
-	valorRemovidoInicio, sucess := lista.removerInicio()
-	println("\n\nValor removido do inicio", valorRemovidoInicio, sucess)
-	println("\nLista:")
-	lista.imprimir()
+				print("\n1 - Sim\n2 - Não\nDeseja continuar? ")
+				fmt.Scan(&opcao)
 
-	valorRemovidoFinal, sucess := lista.removerFinal()
-	println("\n\nValor removido do final", valorRemovidoFinal, sucess)
-	println("\nLista:")
-	lista.imprimir()
+				if opcao == 2 {
+					break
+				}
+			}
+		case 2:
+			for {
+				fmt.Print("\nAdicione o valor: ")
+				fmt.Scan(&valores)
+				lista.adicionarFim(valores)
+				println("Valor adicionado com sucesso!")
 
-	removendoValorPosicao, sucess := lista.removerPosicao(3)
-	fmt.Printf("\n\nValor removido da posição 3 valor removido: %d status: %t", removendoValorPosicao, sucess)
-	println("\nLista:")
-	lista.imprimir()
+				println("\nLista:")
+				lista.imprimir()
+				println()
 
-	valorBuscar := 5
-	buscandoValorPosicao, sucess := lista.posicao(valorBuscar)
-	fmt.Printf("\n\nValor procurado: %d índice: %d status: %t", valorBuscar, buscandoValorPosicao, sucess)
+				print("\n01 - Sim\n02 - Não\nDeseja continuar? ")
+				fmt.Scan(&opcao)
 
-	valorBuscarPosicao := 2
-	buscandoValorNaPosicao, sucess := lista.valorNaPosicao(valorBuscarPosicao)
-	fmt.Printf("\n\nPosição procurado: %d valor: %d status: %t", valorBuscarPosicao, buscandoValorNaPosicao, sucess)
+				if opcao == 2 {
+					break
+				}
+			}
+		case 3:
+			for {
+				fmt.Print("\nAdicione o valor na posicao: ")
+				fmt.Scan(&valores)
+				fmt.Print("\nDigite a posição para ser inserido: ")
+				fmt.Scan(&aux)
+				ok := lista.adicionarPosicao(valores, aux)
+				fmt.Printf("Adicionado %d na posição %d status %t \n", valores, aux, ok)
+
+				println("\nLista:")
+				lista.imprimir()
+				println()
+
+				print("\n01 - Sim\n02 - Não\nDeseja continuar? ")
+				fmt.Scan(&opcao)
+
+				if opcao == 2 {
+					break
+				}
+			}
+		case 4:
+			for {
+				valorRemovidoInicio, sucess := lista.removerInicio()
+				fmt.Printf("\n\nValor %d removido do inicio. Status: %t", valorRemovidoInicio, sucess)
+
+				println("\nLista:")
+				lista.imprimir()
+				println()
+
+				print("\n01 - Sim\n02 - Não\nDeseja continuar? ")
+				fmt.Scan(&opcao)
+
+				if opcao == 2 {
+					break
+				}
+			}
+		case 5:
+			for {
+				valorRemovidoInicio, sucess := lista.removerFinal()
+				fmt.Printf("\n\nValor %d removido do final. Status: %t", valorRemovidoInicio, sucess)
+
+				println("\nLista:")
+				lista.imprimir()
+				println()
+
+				print("\n01 - Sim\n02 - Não\nDeseja continuar? ")
+				fmt.Scan(&opcao)
+
+				if opcao == 2 {
+					break
+				}
+			}
+		case 6:
+			for {
+				print("Digite a posição que deseja remover: ")
+				fmt.Scan(&opcao)
+				removendoValorPosicao, sucess := lista.removerPosicao(opcao)
+				fmt.Printf("\n\nValor removido da posição %d valor removido: %d status: %t", opcao, removendoValorPosicao, sucess)
+
+				println("\nLista:")
+				lista.imprimir()
+				println()
+
+				print("\n01 - Sim\n02 - Não\nDeseja continuar? ")
+				fmt.Scan(&opcao)
+
+				if opcao == 2 {
+					break
+				}
+			}
+		case 7:
+			for {
+				print("Digite o valor que deseja buscar pelo valor: ")
+				fmt.Scan(&opcao)
+				buscandoValorPosicao, sucess := lista.posicao(opcao)
+				fmt.Printf("\n\nValor procurado: %d índice: %d status: %t", opcao, buscandoValorPosicao, sucess)
+
+				println("\nLista:")
+				lista.imprimir()
+				println()
+
+				print("\n01 - Sim\n02 - Não\nDeseja continuar? ")
+				fmt.Scan(&opcao)
+
+				if opcao == 2 {
+					break
+				}
+			}
+		case 8:
+			for {
+				print("Digite a posição que deseja buscar pela posição: ")
+				fmt.Scan(&opcao)
+				buscandoValorNaPosicao, sucess := lista.valorNaPosicao(opcao)
+				fmt.Printf("\n\nPosição procurado: %d valor: %d status: %t", opcao, buscandoValorNaPosicao, sucess)
+
+				print("\n01 - Sim\n02 - Não\nDeseja continuar? ")
+				fmt.Scan(&opcao)
+
+				if opcao == 2 {
+					break
+				}
+			}
+		case 9:
+			for {
+				tamanho := lista.tamanho()
+				fmt.Printf("Tamanho da lista: %d", tamanho)
+
+				print("\n\n01 - Sim\n02 - Não\nDeseja continuar? ")
+				fmt.Scan(&opcao)
+
+				if opcao == 2 {
+					break
+				}
+			}
+
+		}
+
+		if opcao == 10 {
+			break
+		}
+	}
 }
