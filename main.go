@@ -114,17 +114,18 @@ func (lista *Lista) removerFinal() (int, bool) {
 Implemente removerPosicao(posicao int) (int, bool), pulando o nó removido com anterior.proximo = anterior.proximo.proximo. Trate posição inválida e lista vazia.
 Branch sugerida: 04-remover-posicao */
 
-func (lista *Lista) removerPosicao(posicao int) bool {
+func (lista *Lista) removerPosicao(posicao int) (int, bool) {
 	atual := lista.inicio
+	valorAnterior := 0
 	contador := 0
 
 	if posicao < 0 {
-		return false
+		return 0, false
 	}
 
 	if posicao == 0 {
 		lista.inicio = lista.inicio.proximo
-		return true
+		return 0, true
 	}
 
 	for atual != nil && contador < posicao-1 {
@@ -133,12 +134,14 @@ func (lista *Lista) removerPosicao(posicao int) bool {
 	}
 
 	if atual == nil || atual.proximo == nil {
-		return false
+		return 0, false
 	}
+
+	valorAnterior = atual.proximo.valor
 
 	atual.proximo = atual.proximo.proximo
 
-	return true
+	return valorAnterior, true
 }
 
 func (lista *Lista) imprimir() {
@@ -183,8 +186,8 @@ func main() {
 	println("\nLista:")
 	lista.imprimir()
 
-	removendoValorPosicao := lista.removerPosicao(3)
-	println("\n\nValor removido da posição 3", removendoValorPosicao)
+	removendoValorPosicao, sucess := lista.removerPosicao(3)
+	println("\n\nValor removido da posição 3", removendoValorPosicao, sucess)
 	println("\nLista:")
 	lista.imprimir()
 }
