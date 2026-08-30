@@ -36,6 +36,38 @@ func (lista *Lista) adicionarFim(valor int) {
 	atual.proximo = novo
 }
 
+/* Exercício 3 — Inserção em Posição Específica
+Implemente adicionarPosicao(valor, posicao int) bool. Siga a regra de ouro vista em aula: primeiro novo.proximo = anterior.proximo, depois anterior.proximo = novo — nessa ordem, para nunca perder o restante da lista. Trate posição inválida (posicao < 0 ou maior que o tamanho da lista) retornando false.
+Branch sugerida: 02-adicionar-posicao */
+
+func (lista *Lista) adionarPosicao(valor, posicao int) bool {
+	novo := &no{valor: valor}
+	atual := lista.inicio
+	contador := 0
+
+	if posicao < 0 {
+		return false
+	}
+
+	if posicao == 0 {
+		lista.adicionarInicio(valor)
+	}
+
+	for atual != nil && contador < posicao-1 {
+		atual = atual.proximo
+		contador++
+	}
+
+	if atual == nil {
+		return false
+	}
+
+	novo.proximo = atual.proximo
+	atual.proximo = novo
+
+	return true
+}
+
 func (lista *Lista) imprimir() {
 	atual := lista.inicio
 
@@ -44,10 +76,11 @@ func (lista *Lista) imprimir() {
 		return
 	}
 	for atual != nil {
-		println(atual.valor)
+		print(" ", atual.valor)
 
 		atual = atual.proximo
 	}
+
 }
 
 func main() {
@@ -60,4 +93,11 @@ func main() {
 	lista.adicionarInicio(12)
 
 	lista.imprimir()
+
+	println("\n\nInserindo na posição 3")
+	ok := lista.adionarPosicao(20, 3)
+	println("Adicionado 20 na posição 3\n", ok)
+	println("Imprimindo lista")
+	lista.imprimir()
+
 }
