@@ -40,7 +40,7 @@ func (lista *Lista) adicionarFim(valor int) {
 Implemente adicionarPosicao(valor, posicao int) bool. Siga a regra de ouro vista em aula: primeiro novo.proximo = anterior.proximo, depois anterior.proximo = novo — nessa ordem, para nunca perder o restante da lista. Trate posição inválida (posicao < 0 ou maior que o tamanho da lista) retornando false.
 Branch sugerida: 02-adicionar-posicao */
 
-func (lista *Lista) adionarPosicao(valor, posicao int) bool {
+func (lista *Lista) adicionarPosicao(valor, posicao int) bool {
 	novo := &no{valor: valor}
 	atual := lista.inicio
 	contador := 0
@@ -110,6 +110,37 @@ func (lista *Lista) removerFinal() (int, bool) {
 	return valorRemovido, true
 }
 
+/* Exercício 5 — Remoção em Posição Específica
+Implemente removerPosicao(posicao int) (int, bool), pulando o nó removido com anterior.proximo = anterior.proximo.proximo. Trate posição inválida e lista vazia.
+Branch sugerida: 04-remover-posicao */
+
+func (lista *Lista) removerPosicao(posicao int) bool {
+	atual := lista.inicio
+	contador := 0
+
+	if posicao < 0 {
+		return false
+	}
+
+	if posicao == 0 {
+		lista.inicio = lista.inicio.proximo
+		return true
+	}
+
+	for atual != nil && contador < posicao-1 {
+		atual = atual.proximo
+		contador++
+	}
+
+	if atual == nil || atual.proximo == nil {
+		return false
+	}
+
+	atual.proximo = atual.proximo.proximo
+
+	return true
+}
+
 func (lista *Lista) imprimir() {
 	atual := lista.inicio
 
@@ -137,7 +168,7 @@ func main() {
 	lista.imprimir()
 
 	println("\n\nInserindo na posição 3")
-	ok := lista.adionarPosicao(20, 3)
+	ok := lista.adicionarPosicao(20, 3)
 	println("Adicionado 20 na posição 3\n", ok)
 	println("Imprimindo lista")
 	lista.imprimir()
@@ -149,6 +180,11 @@ func main() {
 
 	valorRemovidoFinal, sucess := lista.removerFinal()
 	println("\n\nValor removido do final", valorRemovidoFinal, sucess)
+	println("\nLista:")
+	lista.imprimir()
+
+	removendoValorPosicao := lista.removerPosicao(3)
+	println("\n\nValor removido da posição 3", removendoValorPosicao)
 	println("\nLista:")
 	lista.imprimir()
 }
