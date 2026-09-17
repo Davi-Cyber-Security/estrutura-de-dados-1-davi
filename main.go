@@ -65,7 +65,6 @@ func (lista *Lista) removerNoFinal() {
 		for atual.PROX != nil {
 			atual = atual.PROX
 		}
-
 		atual.PREV.PROX = nil
 	}
 }
