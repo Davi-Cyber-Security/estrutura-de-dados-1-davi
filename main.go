@@ -1,118 +1,81 @@
 package main
 
-import (
-	"fmt"
-	"strconv"
-	"strings"
-)
+import "fmt"
 
-type No struct {
-	valor   int
-	proximo *No
+const Capacidade = 5
+
+type FilaArray struct {
+	dados  [Capacidade]int
+	cabeca int
+	cauda  int
+	tam    int
 }
 
-type PilhaEncadeada struct {
-	topo    *No
-	tamanho int
+func NovaFilaArray() *FilaArray {
+	return &FilaArray{cabeca: 0, cauda: 0, tam: 0}
 }
 
-func NovaPilhaEncadeada() *PilhaEncadeada {
-	return &PilhaEncadeada{topo: nil, tamanho: 0}
+func (f *FilaArray) Enfileirar(v int) bool {
+	if f.Cheia() {
+		return false
+	}
+	f.dados[f.cauda] = v
+	f.cauda = (f.cauda + 1) % Capacidade
+	f.tam++
+	return true
 }
 
-func (p *PilhaEncadeada) Empilhar(v int) {
-	novo := &No{valor: v, proximo: p.topo}
-	p.topo = novo
-	p.tamanho++
-}
-
-func (p *PilhaEncadeada) Desempilhar() (int, bool) {
-	if p.Vazia() {
+func (f *FilaArray) Desenfileirar() (int, bool) {
+	if f.Vazia() {
 		return 0, false
 	}
-	v := p.topo.valor
-	p.topo = p.topo.proximo
-	p.tamanho--
+	v := f.dados[f.cabeca]
+	f.cabeca = (f.cabeca + 1) % Capacidade
+	f.tam--
 	return v, true
 }
 
-func (p *PilhaEncadeada) Topo() (int, bool) {
-	if p.Vazia() {
+func (f *FilaArray) Frente() (int, bool) {
+	if f.Vazia() {
 		return 0, false
 	}
-	return p.topo.valor, true
+	return f.dados[f.cabeca], true
 }
 
-func (p *PilhaEncadeada) Vazia() bool {
-	return p.topo == nil
+func (f *FilaArray) Vazia() bool {
+	return f.tam == 0
 }
 
-func (p *PilhaEncadeada) Tamanho() int {
-	return p.tamanho
-}
-
-func AvaliarRPN(expr string) (int, error) {
-	p := NovaPilhaEncadeada()
-	tokens := strings.Fields(expr)
-
-	for _, token := range tokens {
-		switch token {
-		case "+", "-", "*", "/":
-			b, okB := p.Desempilhar()
-			a, okA := p.Desempilhar()
-			if !okA || !okB {
-				return 0, fmt.Errorf("operandos insuficientes")
-			}
-			var resultado int
-			switch token {
-			case "+":
-				resultado = a + b
-			case "-":
-				resultado = a - b
-			case "*":
-				resultado = a * b
-			case "/":
-				if b == 0 {
-					return 0, fmt.Errorf("divisão por zero")
-				}
-				resultado = a / b
-			}
-			p.Empilhar(resultado)
-		default:
-			n, err := strconv.Atoi(token)
-			if err != nil {
-				return 0, fmt.Errorf("token inválido: %s", token)
-			}
-			p.Empilhar(n)
-		}
-	}
-
-	if p.Tamanho() == 0 {
-		return 0, fmt.Errorf("pilha vazia")
-	}
-	if p.Tamanho() > 1 {
-		return 0, fmt.Errorf("mais de um valor na pilha")
-	}
-	resultado, _ := p.Desempilhar()
-	return resultado, nil
+func (f *FilaArray) Cheia() bool {
+	return f.tam == Capacidade
 }
 
 func main() {
-	casos := []string{
-		"3 4 + 2 *",
-		"5 1 2 + 4 * + 3 -",
-		"3 +",
-		"1 2",
-		"4 0 /",
-		"2 x +",
+	f := NovaFilaArray()
+
+	valores := []int{10, 20, 30, 40, 50, 60}
+	for _, v := range valores {
+		ok := f.Enfileirar(v)
+		fmt.Printf("Enfileirar(%d) → %v\n", v, ok)
 	}
 
-	for _, expr := range casos {
-		resultado, err := AvaliarRPN(expr)
-		if err != nil {
-			fmt.Printf("%s → erro: %v\n", expr, err)
-		} else {
-			fmt.Printf("%s → %d\n", expr, resultado)
+	v1, _ := f.Desenfileirar()
+	v2, _ := f.Desenfileirar()
+	fmt.Printf("Desenfileirou: %d %d\n", v1, v2)
+
+	f.Enfileirar(60)
+	f.Enfileirar(70)
+	fmt.Println("Enfileirou 60 e 70 (wrap-around)")
+
+	fmt.Print("Desenfileirados: ")
+	for !f.Vazia() {
+		v, ok := f.Desenfileirar()
+		if ok {
+			fmt.Printf("%d ", v)
 		}
 	}
+	fmt.Println()
+
+	_, ok := f.Desenfileirar()
+	fmt.Printf("Desenfileirar em fila vazia → ok == %v\n", ok)
 }
