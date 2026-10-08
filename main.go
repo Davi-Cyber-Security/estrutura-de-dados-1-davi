@@ -57,19 +57,40 @@ func (f *FilaEncadeada) Tamanho() int {
 	return f.tamanho
 }
 
+type Atendimento struct {
+	proxSenha int
+	fila      *FilaEncadeada
+}
+
+func NovoAtendimento() *Atendimento {
+	return &Atendimento{proxSenha: 1, fila: NovaFilaEncadeada()}
+}
+
+func (a *Atendimento) Chegar() int {
+	senha := a.proxSenha
+	a.proxSenha++
+	a.fila.Enfileirar(senha)
+	fmt.Printf("Chegou senha %d | aguardando: %d\n", senha, a.fila.Tamanho())
+	return senha
+}
+
+func (a *Atendimento) Chamar() (int, bool) {
+	senha, ok := a.fila.Desenfileirar()
+	if !ok {
+		fmt.Println("Nenhuma senha aguardando")
+		return 0, false
+	}
+	fmt.Printf("Chamando senha %d | aguardando: %d\n", senha, a.fila.Tamanho())
+	return senha, true
+}
+
 func main() {
-	f := NovaFilaEncadeada()
-
-	f.Enfileirar(1)
-	f.Enfileirar(2)
-	fmt.Printf("Após enfileirar 1 e 2 → Tamanho: %d\n", f.Tamanho())
-
-	v1, _ := f.Desenfileirar()
-	v2, _ := f.Desenfileirar()
-	fmt.Printf("Desenfileirou: %d %d\n", v1, v2)
-	fmt.Printf("Fila vazia → Tamanho: %d, Vazia: %v\n", f.Tamanho(), f.Vazia())
-
-	f.Enfileirar(3)
-	frente, _ := f.Frente()
-	fmt.Printf("Após enfileirar 3 → Frente: %d, Tamanho: %d\n", frente, f.Tamanho())
+	a := NovoAtendimento()
+	a.Chegar()
+	a.Chegar()
+	a.Chamar()
+	a.Chegar()
+	a.Chamar()
+	a.Chamar()
+	a.Chamar()
 }
