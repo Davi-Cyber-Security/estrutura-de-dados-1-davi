@@ -2,80 +2,74 @@ package main
 
 import "fmt"
 
-const Capacidade = 5
-
-type FilaArray struct {
-	dados  [Capacidade]int
-	cabeca int
-	cauda  int
-	tam    int
+type No struct {
+	valor   int
+	proximo *No
 }
 
-func NovaFilaArray() *FilaArray {
-	return &FilaArray{cabeca: 0, cauda: 0, tam: 0}
+type FilaEncadeada struct {
+	cabeca  *No
+	cauda   *No
+	tamanho int
 }
 
-func (f *FilaArray) Enfileirar(v int) bool {
-	if f.Cheia() {
-		return false
+func NovaFilaEncadeada() *FilaEncadeada {
+	return &FilaEncadeada{cabeca: nil, cauda: nil, tamanho: 0}
+}
+
+func (f *FilaEncadeada) Enfileirar(v int) {
+	novo := &No{valor: v, proximo: nil}
+	if f.Vazia() {
+		f.cabeca = novo
+		f.cauda = novo
+	} else {
+		f.cauda.proximo = novo
+		f.cauda = novo
 	}
-	f.dados[f.cauda] = v
-	f.cauda = (f.cauda + 1) % Capacidade
-	f.tam++
-	return true
+	f.tamanho++
 }
 
-func (f *FilaArray) Desenfileirar() (int, bool) {
+func (f *FilaEncadeada) Desenfileirar() (int, bool) {
 	if f.Vazia() {
 		return 0, false
 	}
-	v := f.dados[f.cabeca]
-	f.cabeca = (f.cabeca + 1) % Capacidade
-	f.tam--
+	v := f.cabeca.valor
+	f.cabeca = f.cabeca.proximo
+	if f.cabeca == nil {
+		f.cauda = nil
+	}
+	f.tamanho--
 	return v, true
 }
 
-func (f *FilaArray) Frente() (int, bool) {
+func (f *FilaEncadeada) Frente() (int, bool) {
 	if f.Vazia() {
 		return 0, false
 	}
-	return f.dados[f.cabeca], true
+	return f.cabeca.valor, true
 }
 
-func (f *FilaArray) Vazia() bool {
-	return f.tam == 0
+func (f *FilaEncadeada) Vazia() bool {
+	return f.cabeca == nil
 }
 
-func (f *FilaArray) Cheia() bool {
-	return f.tam == Capacidade
+func (f *FilaEncadeada) Tamanho() int {
+	return f.tamanho
 }
 
 func main() {
-	f := NovaFilaArray()
+	f := NovaFilaEncadeada()
 
-	valores := []int{10, 20, 30, 40, 50, 60}
-	for _, v := range valores {
-		ok := f.Enfileirar(v)
-		fmt.Printf("Enfileirar(%d) → %v\n", v, ok)
-	}
+	f.Enfileirar(1)
+	f.Enfileirar(2)
+	fmt.Printf("Após enfileirar 1 e 2 → Tamanho: %d\n", f.Tamanho())
 
 	v1, _ := f.Desenfileirar()
 	v2, _ := f.Desenfileirar()
 	fmt.Printf("Desenfileirou: %d %d\n", v1, v2)
+	fmt.Printf("Fila vazia → Tamanho: %d, Vazia: %v\n", f.Tamanho(), f.Vazia())
 
-	f.Enfileirar(60)
-	f.Enfileirar(70)
-	fmt.Println("Enfileirou 60 e 70 (wrap-around)")
-
-	fmt.Print("Desenfileirados: ")
-	for !f.Vazia() {
-		v, ok := f.Desenfileirar()
-		if ok {
-			fmt.Printf("%d ", v)
-		}
-	}
-	fmt.Println()
-
-	_, ok := f.Desenfileirar()
-	fmt.Printf("Desenfileirar em fila vazia → ok == %v\n", ok)
+	f.Enfileirar(3)
+	frente, _ := f.Frente()
+	fmt.Printf("Após enfileirar 3 → Frente: %d, Tamanho: %d\n", frente, f.Tamanho())
 }
